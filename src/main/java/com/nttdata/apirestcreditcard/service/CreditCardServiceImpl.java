@@ -1,0 +1,40 @@
+package com.nttdata.apirestcreditcard.service;
+
+import com.nttdata.apirestcreditcard.model.CreditCard;
+import com.nttdata.apirestcreditcard.repository.CreditCardRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Service
+public class CreditCardServiceImpl implements CreditCardService {
+
+    @Autowired
+    private CreditCardRepository repository;
+
+    @Override
+    public Mono<CreditCard> create(CreditCard creditCard) {
+        return repository.save(creditCard);
+    }
+
+    @Override
+    public Mono<CreditCard> update(CreditCard creditCard) {
+        return repository.save(creditCard);
+    }
+
+    @Override
+    public Flux<CreditCard> listAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Mono<CreditCard> getById(String id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    public Mono<CreditCard> getByPan(String pan) {
+        return repository.findByPan(pan);
+    }
+}
