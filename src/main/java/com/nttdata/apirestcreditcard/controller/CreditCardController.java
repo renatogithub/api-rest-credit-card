@@ -1,3 +1,11 @@
+/**
+ * Controller that receives the requests
+ *
+ * @author Renato Ponce
+ * @version 1.0
+ * @since 2022-06-24
+ */
+
 package com.nttdata.apirestcreditcard.controller;
 
 import com.nttdata.apirestcreditcard.model.CreditCard;
@@ -22,7 +30,7 @@ public class CreditCardController {
 
     @GetMapping
     public Mono<ResponseEntity<Flux<CreditCard>>> list() {
-        Flux<CreditCard> fxCreditCards=service.listAll();
+        Flux<CreditCard> fxCreditCards = service.listAll();
 
         return Mono.just(ResponseEntity
                 .ok()
@@ -31,31 +39,31 @@ public class CreditCardController {
     }
 
     @GetMapping("/{pan}")
-    public Mono<ResponseEntity<CreditCard>> getByPan(@PathVariable("pan") String pan){
+    public Mono<ResponseEntity<CreditCard>> getByPan(@PathVariable("pan") String pan) {
         return service.getByPan(pan)
-                .map(p->ResponseEntity.ok()
+                .map(p -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(p)
                 ); //Mono<ResponseEntity<CreditCard>>
     }
 
     @PostMapping
-    public Mono<ResponseEntity<CreditCard>> register(@RequestBody CreditCard creditCard, final ServerHttpRequest req){
+    public Mono<ResponseEntity<CreditCard>> register(@RequestBody CreditCard creditCard, final ServerHttpRequest req) {
         return service.create(creditCard)
-                .map(p->ResponseEntity.created(URI.create(req.getURI().toString().concat("/").concat(p.getId())))
+                .map(p -> ResponseEntity.created(URI.create(req.getURI().toString().concat("/").concat(p.getId())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(p)
                 );
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<CreditCard>> update(@PathVariable("id") String id,@RequestBody CreditCard creditCard){
+    public Mono<ResponseEntity<CreditCard>> update(@PathVariable("id") String id, @RequestBody CreditCard creditCard) {
 
-        Mono<CreditCard> monoBody=Mono.just(creditCard);
-        Mono<CreditCard> monoBD=service.getById(id);
+        Mono<CreditCard> monoBody = Mono.just(creditCard);
+        Mono<CreditCard> monoBD = service.getById(id);
 
         return monoBD
-                .zipWith(monoBody, (bd,cc)->{
+                .zipWith(monoBody, (bd, cc) -> {
                     bd.setId(id);
                     bd.setCardBrand(cc.getCardBrand());
                     bd.setActive(cc.isActive());
@@ -72,7 +80,7 @@ public class CreditCardController {
                     return bd;
                 })
                 .flatMap(service::update) //bd->service.modificar(bd)
-                .map(a->ResponseEntity.ok()
+                .map(a -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(a))
                 .defaultIfEmpty(new ResponseEntity<CreditCard>(HttpStatus.NOT_FOUND));
